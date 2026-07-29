@@ -28,9 +28,9 @@ public class PostController {
 
     @Operation(summary = "게시글 목록 조회 처리")
     @CustomApiResponse(value = {
-        CustomResponseCode.INVALID_PARAMETER_ERROR,
-        CustomResponseCode.DB_ERROR,
-        CustomResponseCode.SYSTEM_ERROR
+        CustomResponseCode.INVALID_PARAMETER_ERROR
+        ,CustomResponseCode.DB_ERROR
+        ,CustomResponseCode.SYSTEM_ERROR
     })
     @GetMapping()
     public ResponseEntity<GlobalResponseDTO<PostIndexResponseDTO>> index(
@@ -41,11 +41,10 @@ public class PostController {
 
     @Operation(summary = "게시글 작성 처리")
     @CustomApiResponse(value = {
-        CustomResponseCode.INVALID_PARAMETER_ERROR,
-        CustomResponseCode.UNAUTHENTICATED_ERROR,
-        CustomResponseCode.INVALID_TOKEN_ERROR,
-        CustomResponseCode.DB_ERROR,
-        CustomResponseCode.SYSTEM_ERROR
+        CustomResponseCode.INVALID_PARAMETER_ERROR
+        ,CustomResponseCode.UNAUTHENTICATED_ERROR
+        ,CustomResponseCode.DB_ERROR
+        ,CustomResponseCode.SYSTEM_ERROR
     })
     @PreAuthorize("isAuthenticated()")
     @PostMapping
@@ -58,34 +57,36 @@ public class PostController {
 
     @Operation(summary = "게시글 상세 조회 처리")
     @CustomApiResponse(value = {
-        CustomResponseCode.INVALID_PARAMETER_ERROR,
-        CustomResponseCode.UNAUTHENTICATED_ERROR,
-        CustomResponseCode.DB_ERROR,
-        CustomResponseCode.SYSTEM_ERROR
+        CustomResponseCode.INVALID_PARAMETER_ERROR
+        ,CustomResponseCode.UNAUTHENTICATED_ERROR
+        ,CustomResponseCode.DB_ERROR
+        ,CustomResponseCode.SYSTEM_ERROR
     })
-
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public ResponseEntity<GlobalResponseDTO<PostResponseDTO>> show(
-        @Parameter(description = "게시글 번호", example = "1") @Min(value = 1, message = "1 이상 숫자만 허용") @PathVariable Long id
+        @Parameter(description = "게시글 번호", example = "1") @Min(value = 1, message = "1이상 숫자만 허용합니다.") @PathVariable Long id
     ) {
         return ResponseEntity.ok(GlobalResponseDTO.success(postService.show(id)));
     }
 
     @Operation(summary = "게시글 삭제 처리")
     @CustomApiResponse(value = {
-        CustomResponseCode.INVALID_PARAMETER_ERROR,
-        CustomResponseCode.UNAUTHENTICATED_ERROR,
-        CustomResponseCode.UNAUTHORIZED_ERROR,
-        CustomResponseCode.DB_ERROR,
-        CustomResponseCode.SYSTEM_ERROR
+        CustomResponseCode.INVALID_PARAMETER_ERROR
+        ,CustomResponseCode.UNAUTHENTICATED_ERROR
+        ,CustomResponseCode.UNAUTHORIZED_ERROR
+        ,CustomResponseCode.DB_ERROR
+        ,CustomResponseCode.SYSTEM_ERROR
     })
-
     @PreAuthorize("hasRole('SUPER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<GlobalResponseDTO<Void>> destroy(
-        @Parameter(description = "게시글 번호", example = "1") @Min(value = 1, message = "1 이상 숫자만 허용") @PathVariable Long id
+        @Parameter(description = "게시글 번호", example = "1") @Min(value = 1, message = "1이상 숫자만 허용합니다.") @PathVariable Long id,
+        Authentication authentication
     ) {
-        return ResponseEntity.ok(GlobalResponseDTO.success(postService.delete(id)));
+        long userId = Long.parseLong(authentication.getName());
+        postService.destroy(id, userId);
+
+        return ResponseEntity.ok(GlobalResponseDTO.success());
     }
 }
