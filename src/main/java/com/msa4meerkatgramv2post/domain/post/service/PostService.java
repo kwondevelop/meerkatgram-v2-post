@@ -7,8 +7,8 @@ import com.msa4meerkatgramv2post.domain.post.repository.PostQueryDSLRepository;
 import com.msa4meerkatgramv2post.domain.post.request.PostIndexRequestDTO;
 import com.msa4meerkatgramv2post.domain.post.request.PostStoreRequestDTO;
 import com.msa4meerkatgramv2post.domain.statistics.repository.StatisticsRepository;
-import com.msa4meerkatgramv2post.global.error.custom.ResourceAuthorMismatchException;
-import com.msa4meerkatgramv2post.global.error.custom.ResourceNotFoundException;
+import com.msa4meerkatgramv2post.global.error.custom.business.NotFoundResourceException;
+import com.msa4meerkatgramv2post.global.error.custom.business.ResourceAuthorMismatchException;
 import com.msa4meerkatgramv2post.global.minio.MinioManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -54,7 +54,7 @@ public class PostService {
 
     public PostResponseDTO show(Long id) {
         Post post = postRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("이미 삭제된 게시글: " + id));
+            .orElseThrow(() -> new NotFoundResourceException("이미 삭제된 게시글: " + id));
 
         return PostResponseDTO.from(post);
     }
@@ -62,7 +62,7 @@ public class PostService {
     public void destroy(long id, long userId) {
         // 게시글 조회
         Post post = postRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("이미 삭제된 게시글: " + id));
+            .orElseThrow(() -> new NotFoundResourceException("이미 삭제된 게시글: " + id));
 
         // 작성자 체크
         if(post.getUserId() != userId) {

@@ -1,6 +1,6 @@
 package com.msa4meerkatgramv2post.global.minio;
 
-import com.msa4meerkatgramv2post.global.error.custom.FileManagedException;
+import com.msa4meerkatgramv2post.global.error.custom.business.FileManagedException;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
